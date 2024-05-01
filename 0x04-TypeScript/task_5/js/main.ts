@@ -1,4 +1,4 @@
-nterface  MajorCredits{
+interface  MajorCredits{
 credits: number;
 }
 
