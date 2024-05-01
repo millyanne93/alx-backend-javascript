@@ -1,6 +1,6 @@
 export interface Teacher {
-  readonly firstName: string;
-  readonly lastName: string;
+  readonly _firstName: string;
+  readonly _lastName: string;
   fullTimeEmployee: boolean;
   yearsOfExperience?: number;
   location: string;
@@ -10,24 +10,18 @@ export interface Teacher {
 export interface Directors extends Teacher {
   numberOfReports: number;
 }
+
 export interface printTeacherFunction {
-(firstName: string, lastName: string): string;
+  (firstName: string, lastName: string): string;
 }
 
 export function printTeacher(firstName: string, lastName: string): string {
   return `${firstName[0]}. ${lastName}`;
 }
 
-export interface StudentClassConstructor {
-  new (firstName: string, lastName: string): StudentClass;
-}
+export type StudentClassConstructor = new (firstName: string, lastName: string) => Student;
 
-export interface StudentClass {
-  workOnHomework(): string;
-  displayName(): string;
-}
-
-export class Student implements StudentClass {
+export class Student {
   private _firstName!: string;
   private _lastName!: string;
 
