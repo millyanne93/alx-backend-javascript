@@ -1,42 +1,49 @@
-const fs = require('fs');
+import fs from 'fs';
 
-module.exports = function readDatabase(path) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, { encoding: 'utf-8' }, (err, data) => {
-      if (err) return reject(Error('Cannot load the database'));
-      // split data and taking only list without header
-      const lines = data.split('\n').slice(1, -1);
-      // give the header of data
-      const header = data.split('\n').slice(0, 1)[0].split(',');
-      // find firstname and field index
-      const idxFn = header.findIndex((ele) => ele === 'firstname');
-      const idxFd = header.findIndex((ele) => ele === 'field');
-      // declarate two dictionaries for count each fields and store list of students
-      const fields = {};
-      const students = {};
-      // it will contain all data
-      const all = {};
-
-      lines.forEach((line) => {
-        const list = line.split(',');
-        if (!fields[list[idxFd]]) fields[list[idxFd]] = 0;
-        fields[list[idxFd]] += 1;
-        if (!students[list[idxFd]]) students[list[idxFd]] = '';
-        students[list[idxFd]] += students[list[idxFd]]
-          ? `, ${list[idxFn]}`
-          : list[idxFn];
-      });
-      for (const key in fields) {
-        if (Object.hasOwnProperty.call(fields, key)) {
-          const number = fields[key];
-          all[key] = {
-            students: `List: ${students[key]}`,
-            number,
-          };
-        }
+/**
+ * Reads the data of students in a CSV data file.
+ * @param {String} dataPath The path to the CSV data file.
+ * @author Bezaleel Olakunori <https://github.com/B3zaleel>
+ * @returns {Promise<{
+ *   String: {firstname: String, lastname: String, age: number}[]
+ * }>}
+ */
+const readDatabase = (dataPath) => new Promise((resolve, reject) => {
+  if (!dataPath) {
+    reject(new Error('Cannot load the database'));
+  }
+  if (dataPath) {
+    fs.readFile(dataPath, (err, data) => {
+      if (err) {
+        reject(new Error('Cannot load the database'));
       }
+      if (data) {
+        const fileLines = data
+          .toString('utf-8')
+          .trim()
+          .split('\n');
+        const studentGroups = {};
+        const dbFieldNames = fileLines[0].split(',');
+        const studentPropNames = dbFieldNames
+          .slice(0, dbFieldNames.length - 1);
 
-      return resolve(all);
+        for (const line of fileLines.slice(1)) {
+          const studentRecord = line.split(',');
+          const studentPropValues = studentRecord
+            .slice(0, studentRecord.length - 1);
+          const field = studentRecord[studentRecord.length - 1];
+          if (!Object.keys(studentGroups).includes(field)) {
+            studentGroups[field] = [];
+          }
+          const studentEntries = studentPropNames
+            .map((propName, idx) => [propName, studentPropValues[idx]]);
+          studentGroups[field].push(Object.fromEntries(studentEntries));
+        }
+        resolve(studentGroups);
+      }
     });
-  });
-};
+  }
+});
+
+export default readDatabase;
+module.exports = readDatabase;
