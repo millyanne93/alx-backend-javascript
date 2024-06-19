@@ -8,10 +8,10 @@ function countStudents(path) {
         return;
       }
 
-      const lines = data.split('\n').filter(line => line.trim() !== '');
+      const lines = data.split('\n').filter((line) => line.trim() !== '');
       const header = lines[0].split(',');
-      const firstnameIndex = header.findIndex(column => column === 'firstname');
-      const fieldIndex = header.findIndex(column => column === 'field');
+      const firstnameIndex = header.findIndex((column) => column === 'firstname');
+      const fieldIndex = header.findIndex((column) => column === 'field');
 
       const fields = {};
       const students = {};
