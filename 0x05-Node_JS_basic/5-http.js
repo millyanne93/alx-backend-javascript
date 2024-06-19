@@ -31,7 +31,7 @@ function countStudents(path) {
         }
       });
 
-      const totalStudents = lines.filter(line => line.trim()).length;
+      const totalStudents = lines.filter((line) => line.trim()).length;
       let result = `Number of students: ${totalStudents}\n`;
 
       for (const field in fields) {
